@@ -1,3 +1,5 @@
+import mysql.connector
+
 # Create
 
 def makeUser(username, password):
@@ -8,7 +10,6 @@ def makeUser(username, password):
 
 def setStarred(username, recipe, starred):
     return None
-
 def addPlannedMeal(username, recipe, servings):
     return None
 
