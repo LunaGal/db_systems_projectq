@@ -1,14 +1,18 @@
 import mysql.connector
 
 class RecipeDBConnection:
-    def __init__(self, host, user, password):
+    RecipesCols = ["Recipe_Name", "Recipe_Description", "Author_Name", "Default_Servings"]
+
+    def __init__(self, host, user, password, dbname):
         self.db = mysql.connector.connect(host=host,
                                           user=user,
                                           password=password)
         self.dbcursor = self.db.cursor()
+        self.dbcursor.execute(f"use {dbname}")
 
     # Create
 
+    # Add user to database
     def makeUser(self, username, password):
         try:
             self.dbcursor.execute(f"insert into users values (\"{username}\", \"{password})\"")
@@ -16,8 +20,21 @@ class RecipeDBConnection:
         except mysql.connector.InterfaceError:
             return False
 
+    # Takes a recipe as a dictionary and inserts it into database
+    # Current implementation doesn't support steps
+    # If you pass in a recipe with unexpected fields, the fields are ignored
     def makeRecipe(self, recipe):
-        
+
+        cols = [x for x in RecipeDBConnection.RecipesCols if x in recipe]
+        vals = ["'" + recipe[x] + "'" for x in cols]
+
+        cols_str = ",".join(cols)
+        vals_str = ",".join(vals)
+
+        statement = f"insert into recipes (RecipeID, {cols_str}) values (UUID_TO_BIN(UUID()), {vals_str});"
+
+        self.dbcursor.execute(statement)
+
         return None
 
 
@@ -77,4 +94,19 @@ class RecipeDBConnection:
 
     def deleteRecipe(recipeID):
         return None
+
+    # Other
+
+    def close(self):
+        self.db.commit()
+        self.db.close()
+
+    def __del__(self):
+        self.close
+
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close() 
 
