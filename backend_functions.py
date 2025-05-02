@@ -13,11 +13,12 @@ class RecipeDBConnection:
     # Create
 
     # Add user to database
+    # Return True if successful, false otherwise
     def makeUser(self, username, password):
         try:
-            self.dbcursor.execute(f"insert into users values (\"{username}\", \"{password})\"")
+            self.dbcursor.execute(f"insert into users values (\"{username}\", \"{password}\");")
             return True
-        except mysql.connector.InterfaceError:
+        except mysql.connector.IntegrityError:
             return False
 
     # Takes a recipe as a dictionary and inserts it into database
@@ -42,7 +43,9 @@ class RecipeDBConnection:
 
     ## Starred
 
-    def setStarred(username, recipe, starred):
+    def setStarred(username, recipeID, starred):
+        if starred:
+            statement = f"insert ignore into User_Starred_Recipes set username = {username}, RecipeID = {recipeID};"
         return None
 
 
@@ -81,10 +84,15 @@ class RecipeDBConnection:
 
     ## Recipe
 
-    def getRecipeID(recipeID):
-        return None
+    # Fetches recipe as a tuple
+    # Later version will format it nicely as a dictionary
+    def getRecipeByID(self, recipeID):
+        statement = f"select * from Recipes where RecipeID = %s";
+        self.mycursor.execute(statement, recipeID)
+        return self.mycursor.fetchone()
 
-    def searchRecipe(attributes):
+    def searchRecipe(recipe):
+        statement = f"select * from Recipes where RecipeID = %s"
         return None
 
     # Delete
