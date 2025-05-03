@@ -1,5 +1,9 @@
 import mysql.connector
 
+def entryToDict(fields, colNames):
+    assert(len(fields) == len(colNames))
+    return dict(zip(colNames, fields))
+
 class RecipeDBConnection:
     RecipesCols = ["Recipe_Name", "Recipe_Description", "Author_Name", "Default_Servings"]
 
@@ -32,9 +36,28 @@ class RecipeDBConnection:
         cols_str = ",".join(cols)
         vals_str = ",".join(vals)
 
-        statement = f"insert into recipes (RecipeID, {cols_str}) values (UUID_TO_BIN(UUID()), {vals_str});"
+        self.dbcursor.execute("select uuid_to_bin(uuid())")
 
-        self.dbcursor.execute(statement)
+        id = self.dbcursor.fetchone()[0]
+
+        statement = f"insert into recipes (RecipeID, {cols_str}) values (%s, {vals_str});"
+
+        self.dbcursor.execute(statement, (id, ))
+
+        if "Recipe_Steps" in recipe:
+            for step_number, step in enumerate(recipe["Recipe_Steps"]):
+                statement = "insert into Recipe_Steps Values (%s, %s, %s)"
+                self.dbcursor.execute(statement, (id, step, step_number))
+
+        if "Recipe_Ingredients" in recipe:
+            for ingredientID, quantity in recipe["Recipe_Ingredients"]:
+                statement = "insert into Recipe_Ingredients Values (%s, %s, %s)"
+                self.dbcursor.execute(statement, (id, ingredientID, quantity))
+
+        if "Tags" in recipe:
+            for tagName in recipe["Tags"]:
+                statement = "insert into Tags Values (%s, %s)"
+                self.dbcursor.execute(statement, (id, tagName))
 
         return None
 
@@ -43,26 +66,35 @@ class RecipeDBConnection:
 
     ## Starred
 
-    def setStarred(username, recipeID, starred):
+    # If starred, stars recipeID for username
+    # Otherwise unstars it
+    def setStarred(self, username, recipeID, starred):
         if starred:
-            statement = f"insert ignore into User_Starred_Recipes set username = {username}, RecipeID = {recipeID};"
-        return None
+            statement = "insert ignore into User_Starred_Recipes set username = %s, RecipeID = %s;"
+            self.dbcursor.execute(statement, (username, recipeID))
+        else:
+            statement = "delete from User_Starred_Recipes where username = %s and RecipeID = %s;"
+            self.dbcursor.execute(statement, (username, recipeID))
 
 
     ## Meal Plan
 
-    def addPlannedMeal(username, recipe, servings):
-        return None
+    def addPlannedMeal(self, username, recipe, servings):
+        statement = "insert into Meal_Plans (uuid_to_bin(uuid()), %s, %s, %s);"
+        self.dbcursor.execute(statement, (username, recipe, servings))
 
-    def removePlannedMeal(username, recipe):
-        return None
+    def removePlannedMeal(self, mealPlanID):
+        statement = "delete from Meal_Plans where MealPlanID = %s"
+        self.dbcursor.execute(statement, (mealPlanID, ))
 
-    def changeServings(username, recipe, newServings):
-        return None
+    def changeServings(self, mealPlanID, newServings):
+        statement = "update Meal_Plans set servings = %s where mealPlanID = %s"
+        self.dbcursor(statement, (newServings, mealPlanID))
 
     ## Recipe
 
-    def changeRecipe(newvalues):
+    # newValues should be a dictionary with field : newValue
+    def changeRecipe(self, recipeID, newValues):
         return None
 
     def addRecipeStep(step, position=0):
@@ -92,7 +124,7 @@ class RecipeDBConnection:
         return self.mycursor.fetchone()
 
     def searchRecipe(recipe):
-        statement = f"select * from Recipes where RecipeID = %s"
+        statement = f"select * from Recipes where "
         return None
 
     # Delete
