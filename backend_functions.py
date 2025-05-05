@@ -31,7 +31,7 @@ class RecipeDBConnection:
     def makeRecipe(self, recipe):
 
         cols = [x for x in RecipeDBConnection.RecipesCols if x in recipe]
-        vals = ["'" + recipe[x] + "'" for x in cols]
+        vals = ["'" + str(recipe[x]) + "'" for x in cols]
 
         cols_str = ",".join(cols)
         vals_str = ",".join(vals)
@@ -94,10 +94,18 @@ class RecipeDBConnection:
     ## Recipe
 
     # newValues should be a dictionary with field : newValue
+    # Still needs ability to set steps, ingredients, tags
     def changeRecipe(self, recipeID, newValues):
+        cols = [x for x in RecipeDBConnection.RecipesCols if x in newValues]
+        vals = ["'" + str(newValues[x]) + "'" for x in cols]
+        sets = ",".join([f"set {col} = {val}" for col, val in zip(cols, vals)])
+
+        statement = f"update recipes set {sets} where RecipeID = %s;"
+
+        self.dbcursor.execute(statement, (recipeID, ))
         return None
 
-    def addRecipeStep(step, position=0):
+    def addRecipeStep(step, position=-1):
         return None
 
     # Retrieve
@@ -106,12 +114,15 @@ class RecipeDBConnection:
     ## User
 
     # returns true if password matches password of user, false otherwise
-    def isPassword(user, password):
+    def isPassword(self, user, password):
+        statement = f""
         return None
 
     ## Meal Plan
 
-    def getMealPlan(user):
+    def getMealPlan(self, user):
+        statement = f"select * from Meal_Plans where Username = %s"
+        self.dbcursor.execute(statement, (user, ))
         return None
 
     ## Recipe
