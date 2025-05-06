@@ -37,7 +37,7 @@ def displayTitle(givenPage):
     bar()
 
 # References the user who is logged in
-loggedInUser = ""
+loggedInUsername = ""
 
 # Takes a recipe as input & displays it in text
 def displayRecipe(givenRecipe):
@@ -391,14 +391,17 @@ def logIn(connection): # <username> <password>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(2): return
-    enteredUsername = userInputList[1]
-    enteredPassword = userInputList[2]
-    
-    # TODO: Checks for proper username-password combo in the database
-    print("TestMessage: Logged in: " + enteredUsername + " " + enteredPassword)
-    # TODO: loggedInUser = user in database!
-    # TODO: Populates userProfile with userInfo
-    updatePage(Page.userProfile)
+
+    if connection.isPassword(userInputList[1], userInputList[2]):
+        print("Logged in!")
+        
+        # Saves the current loggedin user
+        global loggedInUsername
+        loggedInUsername = userInputList[1]
+
+        updatePage(Page.userProfile)
+    else:
+        print("Error: Could not login.")
 
 def createProfile(connection): # <username> <password>
     global userInputList
@@ -407,14 +410,20 @@ def createProfile(connection): # <username> <password>
 
     if connection.makeUser(userInputList[1], userInputList[2]):
         print("Profile created!")
+
+        # Saves the current loggedin user
+        global loggedInUsername
+        loggedInUsername = userInputList[1]
+
         updatePage(Page.userProfile)
     else:
         print("Error: Could not create user profile")
-    # TODO: Populate userProfile with userInfo
 
 def logOut(connection):
-    print("TestMessage: Logged Out!")
-    loggedInUser = ""
+    global loggedInUsername
+    loggedInUsername = ""
+    
+    print("Logged Out!")
     updatePage(Page.home)
 
 # ALL OF THESE OCCUR WITHIN CREATE RECIPE
