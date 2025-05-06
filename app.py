@@ -1,3 +1,6 @@
+# PRIOR TO RUNNING
+# Update the password field in config.ini & databaseCreator.py to your password
+
 from backend_functions import RecipeDBConnection
 import configparser
 import enum
@@ -625,4 +628,4 @@ def run_app(host=host, user=user, password=password):
 
 run_app()
 
-#endregion ================================================================================================================
+#endregion ==================================================================================================================
