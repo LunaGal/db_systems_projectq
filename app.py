@@ -19,7 +19,7 @@ dbname = config['Database']['dbname']
 
 # Code by Lina below!
 
-#region GENERIC FUNCTIONS ===========================================================================================
+#region GENERIC/GLOBAL FUNCTIONS ===========================================================================================
 
 # Prints out a bar
 def bar():
@@ -27,7 +27,8 @@ def bar():
 
 # Prints out a longer, thicker bar
 def thickBar():
-    print("===================================================================================")
+    print("========================================================================================")
+    print("========================================================================================")
 
 # Takes the page object & prints out the title of the page
 def displayTitle(givenPage):
@@ -37,6 +38,50 @@ def displayTitle(givenPage):
 
 # References the user who is logged in
 loggedInUser = ""
+
+# Takes a recipe as input & displays it in text
+def displayRecipe(givenRecipe):
+    # Assigns variables based on the given recipe
+    # TODO: Actually pulls & assign things from the database
+    name = "name"
+    authorName = "authorName"
+    description = "This is an example description. Look how long & wordy it is my gosh! Wowee, this person sure has a lot to say about this recipe don't you think? I hope you enjoyed reading that lol"
+    tags = ["Example Tag 1", "Example Tag 2", "Example Tag 3"]
+    defaultServings = 1000   # TODO: Allow the user to modify servings for their mealPlan
+    ingredients = ["Example Ingredient 1", "Example Ingredient 2", "Example Ingredient 3", "Example Ingredient 4", "Example Ingredient 5"]
+    steps = ["Example Step 1", "Example Step 2"]
+    
+    bar()
+    # Name, author, description
+    print(name + " -- By " + authorName)
+    print("")
+    print(description)
+    print("")
+
+    # Tags, default servings
+    tagsListString = ""
+    for i in tags:
+        tagsListString += str(i) + ", "
+    tagsListString = tagsListString[:-2]
+    print("Tags: " + tagsListString)
+    print("Default Servings: " + str(defaultServings))
+    print("")
+
+    # Ingredients & Allergens
+    ingredientsListString = ""
+    for i in ingredients:
+        ingredientsListString += str(i) + ", "
+    ingredientsListString = ingredientsListString[:-2]
+    print("Ingredients: " + ingredientsListString)
+    print("Allergens: ") # TODO: Extract allergens from ingredients
+    print("")
+
+    # Steps
+    print("Steps:")
+    for i in steps:
+        print("   " + "#) " + str(i))
+    
+    bar()
 
 #endregion ================================================================================================================
 
@@ -92,54 +137,6 @@ def updatePage(newPage):
 
 #endregion ================================================================================================================
 
-#region DISPLAY RECIPE FUNCTION ===========================================================================================
-
-# Takes a recipe as input & displays it in text
-def displayRecipe(givenRecipe):
-    # Assigns variables based on the given recipe
-    # TODO: Actually pulls & assign things from the database
-    name = "name"
-    authorName = "authorName"
-    description = "This is an example description. Look how long & wordy it is my gosh! Wowee, this person sure has a lot to say about this recipe don't you think? I hope you enjoyed reading that lol"
-    tags = ["Example Tag 1", "Example Tag 2", "Example Tag 3"]
-    defaultServings = 1000   # TODO: Allow the user to modify servings for their mealPlan
-    ingredients = ["Example Ingredient 1", "Example Ingredient 2", "Example Ingredient 3", "Example Ingredient 4", "Example Ingredient 5"]
-    steps = ["Example Step 1", "Example Step 2"]
-    
-    bar()
-    # Name, author, description
-    print(name + " -- By " + authorName)
-    print("")
-    print(description)
-    print("")
-
-    # Tags, default servings
-    tagsListString = ""
-    for i in tags:
-        tagsListString += str(i) + ", "
-    tagsListString = tagsListString[:-2]
-    print("Tags: " + tagsListString)
-    print("Default Servings: " + str(defaultServings))
-    print("")
-
-    # Ingredients & Allergens
-    ingredientsListString = ""
-    for i in ingredients:
-        ingredientsListString += str(i) + ", "
-    ingredientsListString = ingredientsListString[:-2]
-    print("Ingredients: " + ingredientsListString)
-    print("Allergens: ") # TODO: Extract allergens from ingredients
-    print("")
-
-    # Steps
-    print("Steps:")
-    for i in steps:
-        print("   " + "#) " + str(i))
-    
-    bar()
-
-#endregion ================================================================================================================
-
 #region COMMANDS ==========================================================================================================
 
 # ALL possible commands the user can enter
@@ -192,12 +189,12 @@ def createCommandMap():
         Command.createprofile : commandData(commandText = "createprofile <username> <pasword>", behaviorFunction = createProfile),
         Command.logout : commandData(commandText = "logout", behaviorFunction = logOut),
         
-        Command.createnewrecipe : commandData(commandText = "createnewrecipe", behaviorFunction = updatePage(Page.createNewRecipe)),
-        Command.viewmyrecipes : commandData(commandText = "viewmyrecipes", behaviorFunction = updatePage(Page.myRecipes)),
-        Command.viewstarredrecipes : commandData(commandText = "viewstarredrecipes", behaviorFunction = updatePage(Page.myStarredRecipes)),
-        Command.viewmealplan : commandData(commandText = "viewmealplan", behaviorFunction = updatePage(Page.myMealPlan)),
-        Command.searchrecipes : commandData(commandText = "searchrecipes", behaviorFunction = updatePage(Page.searchRecipes)),
-        Command.returntoprofile : commandData(commandText = "returntoprofile", behaviorFunction = updatePage(Page.userProfile)),
+        Command.createnewrecipe : commandData(commandText = "createnewrecipe", behaviorFunction = goToCreateNewRecipe),
+        Command.viewmyrecipes : commandData(commandText = "viewmyrecipes", behaviorFunction = goToMyRecipes),
+        Command.viewstarredrecipes : commandData(commandText = "viewstarredrecipes", behaviorFunction = goToMyStarredRecipes),
+        Command.viewmealplan : commandData(commandText = "viewmealplan", behaviorFunction = goToMyMealPlan),
+        Command.searchrecipes : commandData(commandText = "searchrecipes", behaviorFunction = goToSearchRecipes),
+        Command.returntoprofile : commandData(commandText = "returntoprofile", behaviorFunction = goToUserProfile),
         # Command.editrecipe : commandData(commandText = "editrecipe <recipeID>", behaviorFunction = updatePage(Page.editRecipe)), # <recipe name>  # TODO: command function, not a page
 
         Command.editname : commandData(commandText = "editname <newname>", behaviorFunction = editRecipeName), # <name>
@@ -235,7 +232,7 @@ userCommand = ""
 
 # Prints out the list of available commands & gathers the user's input
 # commandList -> a list of strings of the commands available to the user from this page
-def getUserInput(commandList):
+def getUserInput(commandList, connection):
     global userInput
     global userInputList
     global userCommand
@@ -255,12 +252,9 @@ def getUserInput(commandList):
     else:
         userCommand = userInputList[0].lower()
 
-    print("User Command: " + userCommand)
-
     for i in commandList:
-        print("i: " + i.name)
         if userCommand == i.name:
-            commandMap[i].behaviorFunction()
+            commandMap[i].behaviorFunction(connection)
             return
     # If command not recognized
     print("")
@@ -269,7 +263,7 @@ def getUserInput(commandList):
 
 #endregion ================================================================================================================
 
-#region DISPLAY PAGES =======================================================================================================
+#region DISPLAY CURRENT PAGE =======================================================================================================
 
 def runCurrentPage(connection):
     # Sets up global variables
@@ -284,64 +278,64 @@ def runCurrentPage(connection):
     displayTitle(currentPage)
 
     # Calls page-specific behavior (displays, commands etc.)
-    pageMap[currentPage].behaviorFunction()
+    pageMap[currentPage].behaviorFunction(connection)
 
 #endregion ==================================================================================================================
 
 #region PAGE BEHAVIOR FUNCTIONS =============================================================================================
     
-def homePage():
+def homePage(connection):
     print("Brought to you by Lina Boughton, Luna Gal, & Diya Misra")
     # Turns user input into navigation
     pageCommands = [Command.login, Command.createprofile]
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def userProfile():
+def userProfile(connection):
     # Turns user input into navigation
     pageCommands = [Command.createnewrecipe, Command.viewmyrecipes, Command.viewstarredrecipes, Command.viewmealplan, Command.searchrecipes, Command.logout]
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def createNewRecipe():
-    newRecipe = "newRecipe"
+def createNewRecipe(connection):
+    newRecipe = {}
     displayRecipe(newRecipe) # TODO: actually create a new recipe here
 
     # Turns user input into navigation
     pageCommands = [Command.editname, Command.editdescription, Command.addtag, Command.removetag, Command.editservings, Command.addingredient, Command.removeingredient, Command.addstep, Command.removestep, Command.submitRecipe, Command.returntoprofile]
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def myRecipes():
+def myRecipes(connection):
     # TODO: For i in myRecipes
     # displayRecipe(i)
 
     # Turns user input into navigation
     pageCommands = [Command.deleterecipe,  Command.star, Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile] # Used to have Command.editrecipe, but removed due to time limitatiosn
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def myStarredRecipes():
+def myStarredRecipes(connection):
     # TODO: For i in myStarredRecipes
     # displayRecipe(i)
 
     # Turns user input into navigation
     pageCommands = [Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile]
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def myMealPlan():
+def myMealPlan(connection):
     # TODO: For i in myMealPlan
     # displayRecipe(i)
 
     # Turns user input into navigation
     pageCommands = [Command.removefrommealplan, Command.star, Command.unstar, Command.editservings, Command.returntoprofile]
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def searchRecipes():
+def searchRecipes(connection):
     # TODO: For i in Recipes (All recipes!!)
     # displayRecipe(i)
 
     # Turns user input into navigation
     pageCommands = [Command.search, Command.filter, Command.star, Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile]
-    getUserInput(pageCommands)
+    getUserInput(pageCommands, connection)
 
-def editRecipe():
+def editRecipe(connection):
     print("TestMessage: Recipe edited!")
     
     # Edit recipe
@@ -363,7 +357,26 @@ def editRecipe():
 
 #region COMMAND BEHAVIOR FUNCTIONS ==========================================================================================
 
-# Ensures the command was given with the right amount of inputs
+# Navigation-related
+def goToCreateNewRecipe(connection):
+    updatePage(Page.createNewRecipe)
+
+def goToMyRecipes(connection):
+    updatePage(Page.myRecipes)
+
+def goToMyStarredRecipes(connection):
+    updatePage(Page.myStarredRecipes)
+
+def goToMyMealPlan(connection):
+    updatePage(Page.myMealPlan)
+
+def goToSearchRecipes(connection):
+    updatePage(Page.searchRecipes)
+
+def goToUserProfile(connection):
+    updatePage(Page.userProfile)
+
+# Ensures a command was given with the right amount of inputs
 def checkUserInputListLength(requiredInputs):
     global userInputList
 
@@ -374,12 +387,12 @@ def checkUserInputListLength(requiredInputs):
 
 # LOGIN/CREATEPROFILE/LOGOUT
 
-def logIn(): # <username> <password>
+def logIn(connection): # <username> <password>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(2): return
     enteredUsername = userInputList[1]
-    enteredPassword = userInputList[1]
+    enteredPassword = userInputList[2]
     
     # TODO: Checks for proper username-password combo in the database
     print("TestMessage: Logged in: " + enteredUsername + " " + enteredPassword)
@@ -387,27 +400,26 @@ def logIn(): # <username> <password>
     # TODO: Populates userProfile with userInfo
     updatePage(Page.userProfile)
 
-def createProfile(): # <username> <password>
+def createProfile(connection): # <username> <password>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(2): return
-    enteredUsername = userInputList[1]
-    enteredPassword = userInputList[1]
-    
-    # TODO: create the user in the database
-    print("TestMessage: profile created: " + enteredUsername + " " + enteredPassword)
-    # TODO: Populates userProfile with userInfo
-    updatePage(Page.userProfile)
-    print("TestMessge: Profile created!")
 
-def logOut():
+    if connection.makeUser(userInputList[1], userInputList[2]):
+        print("Profile created!")
+        updatePage(Page.userProfile)
+    else:
+        print("Error: Could not create user profile")
+    # TODO: Populate userProfile with userInfo
+
+def logOut(connection):
     print("TestMessage: Logged Out!")
     loggedInUser = ""
     updatePage(Page.home)
 
 # ALL OF THESE OCCUR WITHIN CREATE RECIPE
 
-def editRecipeName(): # <new name>
+def editRecipeName(connection): # <new name>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -416,7 +428,7 @@ def editRecipeName(): # <new name>
     print("TestMessage: updated name to " + newName)
     # TODO: Update the name in the database
 
-def addRecipeTag(): # <tagName>
+def addRecipeTag(connection): # <tagName>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -425,7 +437,7 @@ def addRecipeTag(): # <tagName>
     print("TestMessage: added tag " + tagName)
     # TODO: in database
 
-def removeRecipeTag(): # <tagName>
+def removeRecipeTag(connection): # <tagName>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -434,7 +446,7 @@ def removeRecipeTag(): # <tagName>
     print("TestMessage: removed tag " + tagName)
     # TODO: in database
 
-def editRecipeDescription(): # <description>
+def editRecipeDescription(connection): # <description>
     # TODO: with the way this is coded, description can only be 1 word! Mayhaps make a new function that will ask the user for more input & take everything they say.
     # ^^ TODO: Use this function for searchRecipes, addstep, etc. too!
     global userInputList
@@ -445,7 +457,7 @@ def editRecipeDescription(): # <description>
     print("TestMessage: new description: " + newDescription)
     # TODO: in database
 
-def addRecipeStep(): # <step text>
+def addRecipeStep(connection): # <step text>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -454,7 +466,7 @@ def addRecipeStep(): # <step text>
     print("TestMessage: new step: " + newStep)
     # TODO: in database
 
-def removeRecipeStep(): # <step number>
+def removeRecipeStep(connection): # <step number>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -463,7 +475,7 @@ def removeRecipeStep(): # <step number>
     print("TestMessage: removed step: " + stepNumber)
     # TODO: in database
 
-def addRecipeIngredient(): # <ingredientID> (must be at least one ingredient in the recipe)
+def addRecipeIngredient(connection): # <ingredientID> (must be at least one ingredient in the recipe)
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -472,7 +484,7 @@ def addRecipeIngredient(): # <ingredientID> (must be at least one ingredient in 
     print("TestMessage: new ingredient: " + newIngredient)
     # TODO: in database
 
-def removeRecipeIngredient(): # <ingredientID>
+def removeRecipeIngredient(connection): # <ingredientID>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -481,7 +493,7 @@ def removeRecipeIngredient(): # <ingredientID>
     print("TestMessage: removed ingredient: " + ingredientToRemove)
     # TODO: in database
 
-def editRecipeDefaultServings(): # <new servings quantitiy>
+def editRecipeDefaultServings(connection): # <new servings quantitiy>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -490,8 +502,10 @@ def editRecipeDefaultServings(): # <new servings quantitiy>
     print("TestMessage: updated default quantity: " + newQuantity)
     # TODO: in database
 
-def submitRecipe():
-    global userInputList
+def submitRecipe(connection):
+
+    connection
+
     # TODO: Check that the recipe has a name, at least 1 step, at least 1 ingredient
     print("Recipe created!")
     # TODO: in database
@@ -501,7 +515,7 @@ def submitRecipe():
 
 #TODO: Display recipes needs to display recipeID as well! Ingredients should also display their ID!
 
-def deleteRecipe(): # <recipeID>
+def deleteRecipe(connection): # <recipeID>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -509,7 +523,7 @@ def deleteRecipe(): # <recipeID>
     print("TestMessage: deleted " + recipeToDelete)
     # TODO: deleterecipe in database
 
-def starRecipe(): # <recipeID>
+def starRecipe(connection): # <recipeID>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -517,7 +531,7 @@ def starRecipe(): # <recipeID>
     print("TestMessage: starred " + recipeToStar)
     # TODO: star in database
 
-def unstarRecipe(): # <recipeID>
+def unstarRecipe(connection): # <recipeID>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -525,7 +539,7 @@ def unstarRecipe(): # <recipeID>
     print("TestMessage: unstarred " + recipeToUnstar)
     #TODO: Actually unnstar this recipe in the database
 
-def addMealPlanRecipe(): # <recipeID>
+def addMealPlanRecipe(connection): # <recipeID>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -533,7 +547,7 @@ def addMealPlanRecipe(): # <recipeID>
     print("TestMessage: added to meal plan:  " + recipeToAdd)
     #TODO: Actually add this recipe to meal plan in the database
 
-def removeMealPlanRecipe(): # <recipeID>
+def removeMealPlanRecipe(connection): # <recipeID>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -541,7 +555,7 @@ def removeMealPlanRecipe(): # <recipeID>
     print("TestMessage: removed from meal plan:  " + recipeToRemove)
     #TODO: Actually remove this recipe from meal plan in the database
 
-def editServings(): # <recipeID> <new quantity> (Note: refers to meal plan servings)
+def editServings(connection): # <recipeID> <new quantity> (Note: refers to meal plan servings)
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(2): return
@@ -553,7 +567,7 @@ def editServings(): # <recipeID> <new quantity> (Note: refers to meal plan servi
 
 # SEARCH RECIPES
 
-def searchRecipes(): # <keyword>
+def searchRecipes(connection): # <keyword>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(1): return
@@ -562,7 +576,7 @@ def searchRecipes(): # <keyword>
     print("TestMessage: searched with keyword " + keyword)
     #TODO: Actually search in database & output stuff here!
 
-def filterBy(): # <tag, allergen, or ingredient type> <name>
+def filterBy(connection): # <tag, allergen, or ingredient type> <name>
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
     if checkUserInputListLength(2): return
@@ -574,7 +588,7 @@ def filterBy(): # <tag, allergen, or ingredient type> <name>
 
 #endregion ==================================================================================================================
 
-#region EXECUTING THE CODE =================================================================================================
+#region MAIN/EXECUTION =================================================================================================
 
 # Please use the with ... as block (-Luna)
 # It ensures that connection commits everything to the database when the program finishes

@@ -70,8 +70,6 @@ class RecipeDBConnection:
         statement = "insert into Ingredients Values (uuid_to_bin(uuid()), %s)"
         self.dbcursor.execute(statement, (name, ))
 
-    
-    
     # Update
 
     ## Starred
@@ -89,6 +87,7 @@ class RecipeDBConnection:
 
     ## Meal Plan
 
+    # From lina: Am I entering the recipeID here?
     def addPlannedMeal(self, username, recipe, servings):
         self.dbcursor.execute("select uuid_to_bin(uuid())")
         id = self.dbcursor.fetchone()[0]
