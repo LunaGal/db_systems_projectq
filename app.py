@@ -61,7 +61,7 @@ pageData = namedtuple('pageData', ['displayName', 'behaviorFunction'])
 # To access the currentPage:
     # pageMap[currentPage].displayName
     # pageMap[currentPage].behaviorFunction()
-pageMap # We'll create & assign the pageMap at runtime
+pageMap = "" # We'll create & assign the pageMap at runtime
 def createPageMap():
     return {
         Page.home : pageData(displayName = "Welcome to Recipe-gram", behaviorFunction = homePage),
@@ -182,7 +182,7 @@ commandData = namedtuple('commandData', ['commandText', 'behaviorFunction'])
 # To access an instance of a command:
     # commandMap[commandInstance].commandText
     # commandMap[commandInstance].behaviorFunction()
-commandMap # We'll assign this variable at runtime
+commandMap = "" # We'll assign this variable at runtime
 def createCommandMap():
     return {
         Command.login : commandData(commandText = "login <username> <password>", behaviorFunction = logIn()),
