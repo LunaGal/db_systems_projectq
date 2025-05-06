@@ -52,7 +52,7 @@ class Page(Enum):
     myStarredRecipes = auto()
     myMealPlan = auto()
     searchRecipes = auto()
-    editRecipe = auto()
+    # editRecipe = auto()
 
 # Stores data specific to each page
 # displayName -> the name that displays as the title of the page
@@ -74,7 +74,7 @@ def createPageMap():
         Page.myStarredRecipes : pageData(displayName = "My Starred Recipes", behaviorFunction = myStarredRecipes),
         Page.myMealPlan : pageData(displayName = "My Meal Plan", behaviorFunction = myMealPlan),
         Page.searchRecipes : pageData(displayName = "Search for Recipes", behaviorFunction = searchRecipes),
-        Page.editRecipe : pageData(displayName = "Edit Recipe", behaviorFunction = editRecipe)
+        # Page.editRecipe : pageData(displayName = "Edit Recipe", behaviorFunction = editRecipe)
     }
 
 # Tracks our current page, initially set to Page.home
@@ -146,8 +146,8 @@ def displayRecipe(givenRecipe):
 # IF YOU ADD ANYTHING HERE, ADD TO THE COMMANDMAP BELOW!!!!
 # (Since these are userInputs, they should be written in all lowercase!)
 class Command(Enum):
-    login = auto() # TODO: Log In page asks for no command, just <yourusername yourpassword>
-    createprofile = auto() # TODO: Create profile asks for <yourusername yourpassword>, then y/n
+    login = auto()
+    createprofile = auto()
     createnewrecipe = auto()
     viewmyrecipes = auto()
     viewstarredrecipes = auto()
@@ -158,14 +158,14 @@ class Command(Enum):
     addtag = auto() # <tagName>
     removetag = auto() # <tagName>
     editdescription = auto() # <description>
-    addstep = auto() # <step text> # Add step (must be at least one)
+    addstep = auto() # <step text>
     removestep = auto() # <step number>
-    addingredient = auto() # <ingredient name> # Add ingredient (must be at least one)
+    addingredient = auto() # <ingredient name>
     removeingredient = auto() # <ingredient name>
     returntoprofile = auto()
     editdefaultservings = auto() # <new quantity>
     deleterecipe = auto() # <recipe name>
-    editrecipe = auto() # <recipe name>
+    # editrecipe = auto() # <recipe name>
     star = auto() # <recipe name>
     unstar = auto() # <recipe name>
     addtomealplan = auto() # <recipe name>
@@ -188,9 +188,9 @@ commandData = namedtuple('commandData', ['commandText', 'behaviorFunction'])
 commandMap = "" # We'll assign this variable at runtime
 def createCommandMap():
     return {
-        Command.login : commandData(commandText = "login <username> <password>", behaviorFunction = logIn()),
-        Command.createprofile : commandData(commandText = "createprofile <username> <pasword>", behaviorFunction = createProfile()),
-        Command.logout : commandData(commandText = "logout", behaviorFunction = logOut()),
+        Command.login : commandData(commandText = "login <username> <password>", behaviorFunction = logIn),
+        Command.createprofile : commandData(commandText = "createprofile <username> <pasword>", behaviorFunction = createProfile),
+        Command.logout : commandData(commandText = "logout", behaviorFunction = logOut),
         
         Command.createnewrecipe : commandData(commandText = "createnewrecipe", behaviorFunction = updatePage(Page.createNewRecipe)),
         Command.viewmyrecipes : commandData(commandText = "viewmyrecipes", behaviorFunction = updatePage(Page.myRecipes)),
@@ -198,28 +198,28 @@ def createCommandMap():
         Command.viewmealplan : commandData(commandText = "viewmealplan", behaviorFunction = updatePage(Page.myMealPlan)),
         Command.searchrecipes : commandData(commandText = "searchrecipes", behaviorFunction = updatePage(Page.searchRecipes)),
         Command.returntoprofile : commandData(commandText = "returntoprofile", behaviorFunction = updatePage(Page.userProfile)),
-        Command.editrecipe : commandData(commandText = "editrecipe <recipeID>", behaviorFunction = updatePage(Page.editRecipe)), # <recipe name>  # TODO: command function, not a page
+        # Command.editrecipe : commandData(commandText = "editrecipe <recipeID>", behaviorFunction = updatePage(Page.editRecipe)), # <recipe name>  # TODO: command function, not a page
 
-        Command.editname : commandData(commandText = "editname <newname>", behaviorFunction = editRecipeName()), # <name>
-        Command.addtag : commandData(commandText = "addtag <tagname>", behaviorFunction = addRecipeTag()), # <tagName>
-        Command.removetag : commandData(commandText = "removetag <tagname>", behaviorFunction = removeRecipeTag()), # <tagName>
-        Command.editdescription : commandData(commandText = "editdescription <newdescription>", behaviorFunction = editRecipeDescription()), # <description>
-        Command.addstep : commandData(commandText = "addstep <newstep>", behaviorFunction = addRecipeStep()), # <step text> # Add step (must be at least one)
-        Command.removestep : commandData(commandText = "removestep <stepnumber>", behaviorFunction = removeRecipeStep()), # <step number>
-        Command.addingredient : commandData(commandText = "addingredient <ingredientID>", behaviorFunction = addRecipeIngredient()), # <ingredient name> # Add ingredient (must be at least one)
-        Command.removeingredient : commandData(commandText = "removeingredient <ingredientID>", behaviorFunction = removeRecipeIngredient()), # <ingredient name>
-        Command.editdefaultservings : commandData(commandText = "editdefaultservings <quantity>", behaviorFunction = editRecipeDefaultServings()), # <new quantity>
-        Command.submitRecipe : commandData(commandText = "submitRecipe", behaviorFunction = submitRecipe()),
+        Command.editname : commandData(commandText = "editname <newname>", behaviorFunction = editRecipeName), # <name>
+        Command.addtag : commandData(commandText = "addtag <tagname>", behaviorFunction = addRecipeTag), # <tagName>
+        Command.removetag : commandData(commandText = "removetag <tagname>", behaviorFunction = removeRecipeTag), # <tagName>
+        Command.editdescription : commandData(commandText = "editdescription <newdescription>", behaviorFunction = editRecipeDescription), # <description>
+        Command.addstep : commandData(commandText = "addstep <newstep>", behaviorFunction = addRecipeStep), # <step text> # Add step (must be at least one)
+        Command.removestep : commandData(commandText = "removestep <stepnumber>", behaviorFunction = removeRecipeStep), # <step number>
+        Command.addingredient : commandData(commandText = "addingredient <ingredientID>", behaviorFunction = addRecipeIngredient), # <ingredient name> # Add ingredient (must be at least one)
+        Command.removeingredient : commandData(commandText = "removeingredient <ingredientID>", behaviorFunction = removeRecipeIngredient), # <ingredient name>
+        Command.editdefaultservings : commandData(commandText = "editdefaultservings <quantity>", behaviorFunction = editRecipeDefaultServings), # <new quantity>
+        Command.submitRecipe : commandData(commandText = "submitRecipe", behaviorFunction = submitRecipe),
 
-        Command.deleterecipe : commandData(commandText = "deleterecipe <recipeID>", behaviorFunction = deleteRecipe()), # <recipe name>
-        Command.star : commandData(commandText = "star <recipeID>", behaviorFunction = starRecipe()), # <recipe name>
-        Command.unstar : commandData(commandText = "unstar <recipeID>", behaviorFunction = unstarRecipe()), # <recipe name>
-        Command.addtomealplan : commandData(commandText = "addtomealplan <recipeID>", behaviorFunction = addMealPlanRecipe()), # <recipe name>
-        Command.removefrommealplan : commandData(commandText = "removefrommealplan <recipeID>", behaviorFunction = removeMealPlanRecipe()), # <recipe name>
-        Command.editservings : commandData(commandText = "editservings <recipeID> <newquantity>", behaviorFunction = editServings()), # <recipe name>
+        Command.deleterecipe : commandData(commandText = "deleterecipe <recipeID>", behaviorFunction = deleteRecipe), # <recipe name>
+        Command.star : commandData(commandText = "star <recipeID>", behaviorFunction = starRecipe), # <recipe name>
+        Command.unstar : commandData(commandText = "unstar <recipeID>", behaviorFunction = unstarRecipe), # <recipe name>
+        Command.addtomealplan : commandData(commandText = "addtomealplan <recipeID>", behaviorFunction = addMealPlanRecipe), # <recipe name>
+        Command.removefrommealplan : commandData(commandText = "removefrommealplan <recipeID>", behaviorFunction = removeMealPlanRecipe), # <recipe name>
+        Command.editservings : commandData(commandText = "editservings <recipeID> <newquantity>", behaviorFunction = editServings), # <recipe name>
         
-        Command.search : commandData(commandText = "search <searchterm>", behaviorFunction = searchRecipes()), # <keywords>
-        Command.filter : commandData(commandText = "filter <tag/allergen/ingredient> <name>", behaviorFunction = filterBy()), # <tag, allergen, or ingredient name> <name>
+        Command.search : commandData(commandText = "search <searchterm>", behaviorFunction = searchRecipes), # <keywords>
+        Command.filter : commandData(commandText = "filter <tag/allergen/ingredient> <name>", behaviorFunction = filterBy), # <tag, allergen, or ingredient name> <name>
     }
 
 #endregion ================================================================================================================
@@ -244,18 +244,34 @@ def getUserInput(commandList):
     print("")
     print("Enter one of the following commands: ")
     for i in commandList:
-        print(i.commandText)
+        print(commandMap[i].commandText)
     
     # Takes user input
-    userInput = input(">>> ").strip()
+    userInput = input(">>> ")
+    userInput = userInput.strip()
     userInputList = userInput.split()
-    userCommand = userInputList[0].lower() if userInputList else "" # the if-else sets the command to an empty string if there is no command
+    if len(userInputList) == 0:
+        userCommand = ""
+    else:
+        userCommand = userInputList[0].lower()
+
+    print("User Command: " + userCommand)
+
+    for i in commandList:
+        print("i: " + i.name)
+        if userCommand == i.name:
+            commandMap[i].behaviorFunction()
+            return
+    # If command not recognized
+    print("")
+    print("Error: Command not recognized, please try again.")
+
 
 #endregion ================================================================================================================
 
 #region DISPLAY PAGES =======================================================================================================
 
-def runCurrentPage():
+def runCurrentPage(connection):
     # Sets up global variables
     global pageMap
     global currentPage
@@ -280,53 +296,26 @@ def homePage():
     pageCommands = [Command.login, Command.createprofile]
     getUserInput(pageCommands)
 
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
-
 def userProfile():
     # Turns user input into navigation
     pageCommands = [Command.createnewrecipe, Command.viewmyrecipes, Command.viewstarredrecipes, Command.viewmealplan, Command.searchrecipes, Command.logout]
     getUserInput(pageCommands)
 
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
-
 def createNewRecipe():
+    newRecipe = "newRecipe"
     displayRecipe(newRecipe) # TODO: actually create a new recipe here
 
     # Turns user input into navigation
     pageCommands = [Command.editname, Command.editdescription, Command.addtag, Command.removetag, Command.editservings, Command.addingredient, Command.removeingredient, Command.addstep, Command.removestep, Command.submitRecipe, Command.returntoprofile]
     getUserInput(pageCommands)
 
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
-
 def myRecipes():
     # TODO: For i in myRecipes
     # displayRecipe(i)
 
     # Turns user input into navigation
-    pageCommands = [Command.deleterecipe, Command.editrecipe, Command.star, Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile]
+    pageCommands = [Command.deleterecipe,  Command.star, Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile] # Used to have Command.editrecipe, but removed due to time limitatiosn
     getUserInput(pageCommands)
-
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
 
 def myStarredRecipes():
     # TODO: For i in myStarredRecipes
@@ -336,13 +325,6 @@ def myStarredRecipes():
     pageCommands = [Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile]
     getUserInput(pageCommands)
 
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
-
 def myMealPlan():
     # TODO: For i in myMealPlan
     # displayRecipe(i)
@@ -350,13 +332,6 @@ def myMealPlan():
     # Turns user input into navigation
     pageCommands = [Command.removefrommealplan, Command.star, Command.unstar, Command.editservings, Command.returntoprofile]
     getUserInput(pageCommands)
-
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
 
 def searchRecipes():
     # TODO: For i in Recipes (All recipes!!)
@@ -366,14 +341,7 @@ def searchRecipes():
     pageCommands = [Command.search, Command.filter, Command.star, Command.unstar, Command.addtomealplan, Command.removefrommealplan, Command.returntoprofile]
     getUserInput(pageCommands)
 
-    for i in pageCommands:
-        if userCommand == i:
-            commandMap[i].behaviorFunction()
-            return
-    # If command not recognized
-    print("Command not recognized, please try again.")
-
-def editRecipe(): # TODO: editRecipe should be a command??? Not a page...
+def editRecipe():
     print("TestMessage: Recipe edited!")
     
     # Edit recipe
@@ -437,7 +405,7 @@ def logOut():
     loggedInUser = ""
     updatePage(Page.home)
 
-# ALL OF THESE OCCUR WITHIN CREATE/EDIT RECIPE
+# ALL OF THESE OCCUR WITHIN CREATE RECIPE
 
 def editRecipeName(): # <new name>
     global userInputList
@@ -467,7 +435,7 @@ def removeRecipeTag(): # <tagName>
     # TODO: in database
 
 def editRecipeDescription(): # <description>
-    #TODO: with the way this is coded, description can only be 1 word! Mayhaps make a new function that will ask the user for more input & take everything they say.
+    # TODO: with the way this is coded, description can only be 1 word! Mayhaps make a new function that will ask the user for more input & take everything they say.
     # ^^ TODO: Use this function for searchRecipes, addstep, etc. too!
     global userInputList
     # If there are not enough inputs with the command, exit prematurely
@@ -624,7 +592,7 @@ def run_app(host=host, user=user, password=password):
 
         # Forever calls the currentPage to execute its behaviors
         while True:
-            runCurrentPage(pageMap[currentPage])
+            runCurrentPage(connection)
 
 run_app()
 
