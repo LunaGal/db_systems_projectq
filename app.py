@@ -45,7 +45,7 @@ def displayRecipe(givenRecipe):
     # TODO: Actually pulls & assign things from the database
     name = "name"
     authorName = "authorName"
-    description = "This is an example description. Look how long & wordy it is my gosh! Wowee, this person sure has a lot to say about this recipe don't you think? I hope you enjoyed reading that lol"
+    description = "This is an example description."
     tags = ["Example Tag 1", "Example Tag 2", "Example Tag 3"]
     defaultServings = 1000   # TODO: Allow the user to modify servings for their mealPlan
     ingredients = ["Example Ingredient 1", "Example Ingredient 2", "Example Ingredient 3", "Example Ingredient 4", "Example Ingredient 5"]
@@ -96,7 +96,7 @@ class Page(Enum):
     myRecipes = auto()
     myStarredRecipes = auto()
     myMealPlan = auto()
-    searchRecipes = auto()
+    searchPage = auto()
     # editRecipe = auto()
 
 # Stores data specific to each page
@@ -118,7 +118,7 @@ def createPageMap():
         Page.myRecipes : pageData(displayName = "My Recipes", behaviorFunction = myRecipes),
         Page.myStarredRecipes : pageData(displayName = "My Starred Recipes", behaviorFunction = myStarredRecipes),
         Page.myMealPlan : pageData(displayName = "My Meal Plan", behaviorFunction = myMealPlan),
-        Page.searchRecipes : pageData(displayName = "Search for Recipes", behaviorFunction = searchRecipes),
+        Page.searchPage : pageData(displayName = "Search for Recipes", behaviorFunction = searchPage),
         # Page.editRecipe : pageData(displayName = "Edit Recipe", behaviorFunction = editRecipe)
     }
 
@@ -193,7 +193,7 @@ def createCommandMap():
         Command.viewmyrecipes : commandData(commandText = "viewmyrecipes", behaviorFunction = goToMyRecipes),
         Command.viewstarredrecipes : commandData(commandText = "viewstarredrecipes", behaviorFunction = goToMyStarredRecipes),
         Command.viewmealplan : commandData(commandText = "viewmealplan", behaviorFunction = goToMyMealPlan),
-        Command.searchrecipes : commandData(commandText = "searchrecipes", behaviorFunction = goToSearchRecipes),
+        Command.searchrecipes : commandData(commandText = "searchrecipes", behaviorFunction = goToSearchPage),
         Command.returntoprofile : commandData(commandText = "returntoprofile", behaviorFunction = goToUserProfile),
         # Command.editrecipe : commandData(commandText = "editrecipe <recipeID>", behaviorFunction = updatePage(Page.editRecipe)), # <recipe name>  # TODO: command function, not a page
 
@@ -296,7 +296,7 @@ def userProfile(connection):
     getUserInput(pageCommands, connection)
 
 def createNewRecipe(connection):
-    newRecipe = {}
+    newRecipe = ""
     displayRecipe(newRecipe) # TODO: actually create a new recipe here
 
     # Turns user input into navigation
@@ -327,7 +327,7 @@ def myMealPlan(connection):
     pageCommands = [Command.removefrommealplan, Command.star, Command.unstar, Command.editservings, Command.returntoprofile]
     getUserInput(pageCommands, connection)
 
-def searchRecipes(connection):
+def searchPage(connection):
     # TODO: For i in Recipes (All recipes!!)
     # displayRecipe(i)
 
@@ -370,8 +370,8 @@ def goToMyStarredRecipes(connection):
 def goToMyMealPlan(connection):
     updatePage(Page.myMealPlan)
 
-def goToSearchRecipes(connection):
-    updatePage(Page.searchRecipes)
+def goToSearchPage(connection):
+    updatePage(Page.searchPage)
 
 def goToUserProfile(connection):
     updatePage(Page.userProfile)
