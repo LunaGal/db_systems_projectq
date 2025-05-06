@@ -66,7 +66,12 @@ class RecipeDBConnection:
 
         return True
 
+    def addIngredient(self, name):
+        statement = "insert into Ingredients Values (uuid_to_bin(uuid()), %s)"
+        self.dbcursor.execute(statement, (name, ))
 
+    
+    
     # Update
 
     ## Starred
@@ -188,6 +193,61 @@ class RecipeDBConnection:
             recipes.append(recipe)
 
         return recipes
+    
+    def searchRecipeByAllergen(self, allergenName):
+        statement = "select Recipe_Ingredients.RecipeID from Recipe_Ingredients inner join Allergens on Recipe_Ingredients.IngredientID = Allergens.IngredientID where Allergen_Name = %s;"
+        self.dbcursor.execute(statement, (allergenName))
+
+        recipes = []
+        queries = [x for x in self.dbcursor]
+
+        for x in queries:
+            recipe = self.getRecipeByID(x[0])
+            recipes.append(recipe)
+
+        return recipes
+    
+    def searchRecipeByTag(self, tagName):
+        statement = "select Recipes.RecipeID from Recipes inner join Tags on Recipes.RecipeID=Tags.RecipeID where Tags.tag_name = /s;"
+        self.dbcursor.execute(statement, (tagName))
+
+        recipes = []
+        queries = [x for x in self.dbcursor]
+
+        for x in queries:
+            recipe = self.getRecipeByID(x[0])
+            recipes.append(recipe)
+
+        return recipes
+    
+    def searchRecipeByIngredient(self, ingredientName):
+        statement = "select Recipes.RecipeID from Recipes inner join Recipe_Ingredients on Recipes.RecipeID=Recipe_Ingredients.RecipeID inner join Ingredients on Recipe_Ingredients.IngredientID=Ingredients.IngredientID where Ingredients.Ingredient_Name = %s"
+        self.dbcursor.execute(statement, (ingredientName))
+
+        recipes = []
+        queries = [x for x in self.dbcursor]
+
+        for x in queries:
+            recipe = self.getRecipeByID(x[0])
+            recipes.append(recipe)
+
+        return recipes
+
+    ## Ingredients
+
+    # Returns as tuples because Ingredients aren't really complex enough to represent as dicts
+    # shape is (ingredientid, ingredient_name)
+    def getAllIngredients(self):
+        statement = "select * from Ingredients;"
+        self.dbcursor.execute(statement)
+        return [x for x in self.dbcursor]
+    
+    # Returns a list of ingredients with a specified name
+    def getIngredientsByName(self, name):
+        statement = "select * from Ingredients where Ingredient_Name = %s"
+        self.dbcursor.execute(statement, (name, ))
+        return [x for x in self.dbcursor]
+
 
     # Delete
 
